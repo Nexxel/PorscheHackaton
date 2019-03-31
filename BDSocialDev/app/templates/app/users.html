@@ -1,0 +1,144 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<div class="jumbotron">
+    <h1>Big data and Social dev</h1>
+    <p>Select your hashtag for showing the users related</p>
+    <form id="options" action="/users" method="post">{% csrf_token %}
+        <select name="option">
+            <option selected="selected" disabled>Selection</option>
+            <optgroup label="Fitness">
+                {% for hashtag, n in hashtags_fitness %}
+                    <option value={{hashtag}}>{{hashtag}}</option>
+                {% endfor %}
+            </optgroup>
+            <optgroup label="Food">
+                {% for hashtag, n in hashtags_food %}
+                    <option value={{hashtag}}>{{hashtag}}</option>
+                {% endfor %}
+            </optgroup>
+            <optgroup label="Travel">
+                {% for hashtag, n in hashtags_travel %}
+                    <option value={{hashtag}}>{{hashtag}}</option>
+                {% endfor %}
+            </optgroup>
+            <optgroup label="Tech">
+                {% for hashtag, n in hashtags_tech %}
+                    <option value={{hashtag}}>{{hashtag}}</option>
+                {% endfor %}
+            </optgroup>
+            <optgroup label="Fashion">
+                {% for hashtag, n in hashtags_fashion %}
+                    <option value={{hashtag}}>{{hashtag}}</option>
+                {% endfor %}
+            </optgroup>
+        </select>
+        <hr />
+        <input type="submit" value="Select" />
+    </form>
+    
+    
+</div>
+
+<div class="row">
+    <div class="col-md-12">
+        {% if option %}
+            <h2> #{{option}}'s users </h2>
+            <table id="table" class="table table-striped table-bordered table-sm">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Follower count</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                   <tr>
+                       <td value="{{user.id}}">{{ user.username }}</td>
+                       <td id="{{ user.id }}" style="text-align: center;">{{ user.followerCount }}</td>
+                        <td style="text-align: center;" class="botones"><button class="btnlik" id="{{ user.id }}" onClick="like(this.id)">Follow</button><button  class="btnunlik" id="{{ user.id }}" onClick="disLike(this.id)">Unfollow</button> </td>
+                   </tr> 
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    </div>
+</div>
+
+<script>
+ 
+ $(document).ready(function() {
+  
+ 
+
+});
+
+ function like(clicked_id){
+       
+       
+      lookForLikes(clicked_id);
+     fetch('http://Hackathon.ocupa2.com/instagram/' + clicked_id + '/like?user_id=17481&action=follow',
+         { method: 'post' }
+     )
+ 
+ }
+ 
+  function disLike(clicked_id){
+   
+  
+  
+     lookForUnLikes(clicked_id);
+  fetch('http://Hackathon.ocupa2.com/instagram/'+ clicked_id +'/like?user_id=17481&action=unfollow',
+  {method:'post'},
+  )
+   
+ }
+ 
+function lookForLikes(id){
+var list = document.querySelectorAll("td");
+
+[].forEach.call(list, (e)=>{
+  if(e.id == id)
+   e.innerHTML =  parseInt(e.innerHTML) + 1
+
+  if (e.className == 'botones' && e.children[0].id == id ){
+       e.children[0].style.visibility = "hidden";
+           console.log("invisible");
+  }
+  if ( e.className == 'botones'  && e.children[1].id == id )
+     e.children[1].style.visibility = "visible";
+
+});
+
+}
+
+function lookForUnLikes(id){
+var list = document.querySelectorAll("td");
+[].forEach.call(list, (e)=>{
+  if(e.id == id)
+   e.innerHTML =  parseInt(e.innerHTML) - 1
+
+ console.log(e.id);
+
+  if ( e.className == 'botones'  && e.children[1].id == id ){
+       e.children[1].style.visibility = "hidden";
+        console.log("invisible");
+ }
+if ( e.className == 'botones' && e.children[0].id == id ){ 
+     e.children[0].style.visibility = "visible";
+
+  }
+
+
+});
+}
+
+ </script>
+
+{% endblock %}
+
+
+

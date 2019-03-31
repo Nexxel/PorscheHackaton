@@ -1,0 +1,116 @@
+﻿{% extends "app/layout.html" %}
+
+{% block content %}
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+
+<div class="jumbotron">
+    <h1>Big data and Social dev</h1>
+    <h3>Filtrado de tweet por hashTag</h3>
+
+<form method="get">
+<select name="option">
+           <option selected="selected" disabled>Selection</option>
+           <optgroup label="Fitness">
+               {% for hashtag, n in hashtags_fitness %}
+                   <option value={{hashtag}}>{{hashtag}}</option>
+               {% endfor %}
+           </optgroup>
+           <optgroup label="Food">
+               {% for hashtag, n in hashtags_food %}
+                   <option value={{hashtag}}>{{hashtag}}</option>
+               {% endfor %}
+           </optgroup>
+           <optgroup label="Travel">
+               {% for hashtag, n in hashtags_travel %}
+                   <option value={{hashtag}}>{{hashtag}}</option>
+               {% endfor %}
+           </optgroup>
+           <optgroup label="Tech">
+               {% for hashtag, n in hashtags_tech %}
+                   <option value={{hashtag}}>{{hashtag}}</option>
+               {% endfor %}
+           </optgroup>
+           <optgroup label="Fashion">
+               {% for hashtag, n in hashtags_fashion %}
+                   <option value={{hashtag}}>{{hashtag}}</option>
+               {% endfor %}
+           </optgroup>
+       </select>
+    <input type="submit"  value="Send">
+</form>
+    </div>
+<div class="jumbotron">
+<h3>Filtrado por Area de Influencia Global:</h3>
+<form method="get">
+{{ form_Influencer.area_influencer }}
+<input type="submit"  value="Send">
+</form>
+    </div>
+<div class="container">
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped table-bordered table-sm">
+            <thead>
+            <tr>
+                <th>Id</th>
+                <th colspan="2" style="text-align: center;">Action</th>
+            <!---    <th>Name</th>
+                <th>screemName</th>
+                <th>userId</th> --->
+            </tr>
+            </thead>
+            <tbody>
+            {% for x in data %}
+            <tr>
+                <td>{{ x.name }}</td>
+            <!---    <td>{{ x.name }}</td>
+                <td>{{ x.screenName }}</td>
+                <td>{{ x.userid }}</td> --->
+                <td><button type="button" name="button" id="Follow{{ data.user }}" onclick="Follow({{ data.user }})" >Follow</button></td>
+                <td><button type="button" name="button" id="UnFollow{{ data.user }}" onclick="UnFollow({{ data.user }})">UnFollow</button></td>
+            </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+
+<script>
+
+function Follow(id){
+  var xhr=new XMLHttpRequest();
+  xhr.onload=function(e) {
+  if(this.readyState === 4) {
+      response = JSON.parse(xhr.responseText);
+      if (response['status'] == 'ok') {
+          var ButtonFollow = document.getElementById('Follow'+id);
+          console.log("Follow dado correctamente");
+        }
+      else {
+        console.log("No se pudo dar Follow ocurrio un error");
+            }
+      }};
+  xhr.open("GET", "/giveFollow/"+Number(id)+"/", true);
+  xhr.send(null);
+};
+
+function UnFollow(id){
+  var xhr=new XMLHttpRequest();
+  xhr.onload=function(e) {
+  if(this.readyState === 4) {
+      response = JSON.parse(xhr.responseText);
+      if (response['status'] == 'ok') {
+          var ButtonUnFollow = document.getElementById('UnFollow'+id);
+          console.log("UnFollow dado correctamente");
+        }
+      else {
+        console.log("No se pudo dar UnFollow ocurrio un error");
+            }
+      }};
+  xhr.open("GET", "/takeOffFollow/"+Number(id)+"/", true);
+  xhr.send(null);
+};
+</script>
+
+{% endblock %}
